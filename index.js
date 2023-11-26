@@ -26,10 +26,88 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
+    // get all product from from data base for assignment 12
+    // =======================================================
+    const allProductCollection = client.db("tech12").collection("techProduct");
+    app.get('/techProduct', async(req, res) => {
+      const result = await allProductCollection.find().toArray();
+      res.send(result);
+    })
 
+
+    // For upvote add
+    app.post('/techProduct/:id', async (req,res) =>{
+      const {id} = req.params;
+      const {user,email} = req.body;
+      const upvotedOn = new Date();
+      console.log(id);
+      console.log(req.body);
     
+    try{
+      const filter = {_id: new ObjectId(id)}
+      const options = { upsert: true};
+      const update = {
+        $push:{
+          upvote: {
+            user: user,
+            email: email,
+            upvotedOn: upvotedOn,
+          }
+        }
+      };
+      const result = await allProductCollection.updateOne(filter, update, options);
+      res.send(result);
+
+    }
+    catch(error){
+      console.error("Error Adding Upvote:", error);
+      res.status(500).send("Server Error");
+    }
+  });
+
+// Get product details by ID
+// ===================================
+app.get('/techProduct/:id', async(req, res) =>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await allProductCollection.findOne(query);
+  res.send(result);
+});
 
 
+// add new review
+// =======================================
+ app.post('/techProduct/:id/addReview', async (req,res) => {
+  const { id } = req.params;
+  const { username, comment, rating, photoURL } = req.body;
+  const timestamp = new Date();
+  
+  console.log(req.body);
+  console.log(id);
+
+try {
+  const filter = {_id: new ObjectId(id)}
+  const options = { upsert: true};
+  const update = {
+    $push: {
+      reviews: {
+        name: username,
+        comment: comment,
+        rating: rating,
+        photoURL: photoURL,
+        timestamp: timestamp
+      }
+    }
+  };
+  const result = await allProductCollection.updateOne(filter, update, options);
+  res.send(result);
+
+}
+catch(error){
+  console.error("Error Adding Upvote:", error);
+  res.status(500).send("Server Error");
+}
+});
 
 //     const database = client.db("usersDB");
 //     const userCollection = database.collection("users");
