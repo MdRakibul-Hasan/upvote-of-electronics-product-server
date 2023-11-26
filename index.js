@@ -109,6 +109,11 @@ catch(error){
 }
 });
 
+app.get('/productsCount', async(req, res) => {
+  const count = await allProductCollection.estimatedDocumentCount();
+res.send({count});
+})
+
 //     const database = client.db("usersDB");
 //     const userCollection = database.collection("users");
 
