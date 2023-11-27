@@ -29,10 +29,19 @@ async function run() {
     // get all product from from data base for assignment 12
     // =======================================================
     const allProductCollection = client.db("tech12").collection("techProduct");
-    app.get('/techProduct', async(req, res) => {
-      const result = await allProductCollection.find().toArray();
+
+    app.get('/techProduct', async (req, res) => {
+      const page = parseInt(req.query.page); // Use 'req.query' to access query parameters
+      const size = parseInt(req.query.size);
+      console.log(page, size);
+    
+      const result = await allProductCollection.find()
+        .skip(page * size)
+        .limit(size)
+        .toArray();
+    
       res.send(result);
-    })
+    });
 
 
     // For upvote add
@@ -113,6 +122,10 @@ app.get('/productsCount', async(req, res) => {
   const count = await allProductCollection.estimatedDocumentCount();
 res.send({count});
 })
+
+// get productys by page number and size
+
+
 
 //     const database = client.db("usersDB");
 //     const userCollection = database.collection("users");
