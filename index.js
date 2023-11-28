@@ -131,8 +131,14 @@ app.post('/techProduct', async(req, res) =>{
   res.send(result);
 })
 
-
-
+// delete products
+// ============================
+app.delete('/techProduct/:id', async(req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await allProductCollection.deleteOne(query);
+  res.send(result);
+})
 
 // get productys by page number and size
 
