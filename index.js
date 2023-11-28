@@ -123,6 +123,17 @@ app.get('/productsCount', async(req, res) => {
 res.send({count});
 })
 
+// Add new product
+app.post('/techProduct', async(req, res) =>{
+  const newProduct = req.body;
+  console.log(newProduct);
+  const result = await allProductCollection.insertOne(newProduct);
+  res.send(result);
+})
+
+
+
+
 // get productys by page number and size
 
 
