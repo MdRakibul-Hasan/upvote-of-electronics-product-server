@@ -29,6 +29,7 @@ async function run() {
     // get all product from from data base for assignment 12
     // =======================================================
     const allProductCollection = client.db("tech12").collection("techProduct");
+    const allUsersCollection = client.db("tech12").collection("users");
 
     app.get('/techProduct', async (req, res) => {
       const page = parseInt(req.query.page); // Use 'req.query' to access query parameters
@@ -139,6 +140,56 @@ app.delete('/techProduct/:id', async(req, res) => {
   const result = await allProductCollection.deleteOne(query);
   res.send(result);
 })
+
+// Update products 
+// ===================================
+app.put('/techProduct/:id', async(req, res) => {
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)}
+  const options = { upsert: true};
+
+  const updatedProduct = req.body;
+  const product = {
+      $set: {
+        productName: updatedProduct.productName, 
+        externalLinks: updatedProduct.externalLinks, 
+        category: updatedProduct.category,
+        tags: updatedProduct.tags, 
+        productDetails: updatedProduct.productDetails, 
+        OwnerEmail: updatedProduct.OwnerEmail,
+        productOwner: updatedProduct.productOwner,
+        image: updatedProduct.image
+      }
+  }
+    const result = await allProductCollection.updateOne(filter, product, options)
+    res.send(result);
+})
+
+//  add user to server
+// ==========================
+// app.post('/users', async(req, res) =>{
+//   const newUser = req.body;
+//   console.log(newUser);
+//   const result = await allUsersCollection.insertOne(newUser);
+//   res.send(result);
+// })
+
+
+// user related api
+// ==============================
+app.post('/users', async (req, res) => {
+  const user = req.body;
+  const query = {email: user.email}
+  const existingUser = await allUsersCollection.findOne(query);
+  if(existingUser){
+    return res.send({message: 'user already exists', insertedId:null})
+  }
+
+  const result = await allUsersCollection.insertOne(user);
+  res.send(result);
+})
+
+
 
 // get productys by page number and size
 
