@@ -30,6 +30,7 @@ async function run() {
     // =======================================================
     const allProductCollection = client.db("tech12").collection("techProduct");
     const allUsersCollection = client.db("tech12").collection("users");
+    const allAdminCollection = client.db("tech12").collection("adminar");
 
     app.get('/techProduct', async (req, res) => {
       const page = parseInt(req.query.page); // Use 'req.query' to access query parameters
@@ -188,6 +189,59 @@ app.post('/users', async (req, res) => {
   const result = await allUsersCollection.insertOne(user);
   res.send(result);
 })
+
+// get users data from server
+// ===========================
+app.get('/users', async(req, res) =>{
+  const cursor = allUsersCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
+// delete users data from server
+// ===================================
+app.delete('/users/:id', async(req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await allUsersCollection.deleteOne(query);
+  res.send(result);
+})
+
+// get Admin api
+// ============================
+app.get('/adminar', async(req, res) =>{
+  const cursor = allAdminCollection.find();
+  const result = await cursor.toArray();
+  res.send(result);
+})
+
+// update user role 
+// ============================
+app.put('/users/:id', async(req, res) => {
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)}
+  const options = { upsert: true};
+
+  const updatedUser = req.body;
+  const users = {
+      $set: {
+        role: updatedUser.role, 
+
+      }
+  }
+    const result = await allUsersCollection.updateOne(filter, users, options)
+    res.send(result);
+})
+
+// get an user by id
+// ========================
+app.get('/users/:id', async(req, res) =>{
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await allUsersCollection.findOne(query);
+  res.send(result);
+});
+
 
 
 
