@@ -118,11 +118,6 @@ app.put('/techProduct/:id', async (req, res) => {
 // Start the server
 
 
-
-
-
-
-
 //  app.post('/techProduct/:id/addReview', async (req,res) => {
 //   const { id } = req.params;
 //   const { username, comment, rating, photoURL } = req.body;
@@ -204,43 +199,7 @@ app.put('/techProduct/:id', async(req, res) => {
     res.send(result);
 })
 
-// test update product
-// app.post('/techProduct/:id/addCategory', async (req, res) => {
-//   const { id } = req.params;
-//   const category = req.body;
-//   const timestamp = new Date();
 
-//   console.log(req.body);
-//   console.log(id);
-
-//   try {
-//     const filter = { _id: new ObjectId(id) }
-//     const options = { upsert: true };
-//     const update = {
-//       $push: {
-//         category: category,
-//         timestamp: timestamp
-//       }
-//     };
-//     const result = await allProductCollection.updateOne(filter, update, options);
-//     res.json(result); // Return result as JSON
-//   } catch (error) {
-//     console.error("Error Adding Category:", error);
-//     res.status(500).json({ error: "Internal Server Error" }); // Return error as JSON
-//   }
-// });
-
-
-
-
-//  add user to server
-// ==========================
-// app.post('/users', async(req, res) =>{
-//   const newUser = req.body;
-//   console.log(newUser);
-//   const result = await allUsersCollection.insertOne(newUser);
-//   res.send(result);
-// })
 
 
 // user related api
