@@ -88,37 +88,72 @@ app.get('/techProduct/:id', async(req, res) =>{
 
 // add new review
 // =======================================
- app.post('/techProduct/:id/addReview', async (req,res) => {
+app.put('/techProduct/:id', async (req, res) => {
   const { id } = req.params;
-  const { username, comment, rating, photoURL } = req.body;
-  const timestamp = new Date();
-  
-  console.log(req.body);
-  console.log(id);
+  const { category } = req.body; // New category
 
-try {
-  const filter = {_id: new ObjectId(id)}
-  const options = { upsert: true};
-  const update = {
-    $push: {
-      reviews: {
-        name: username,
-        comment: comment,
-        rating: rating,
-        photoURL: photoURL,
-        timestamp: timestamp
+  try {
+    const filter = { _id: new ObjectId(id) };
+    const update = {
+      $set: {
+        category: category
       }
-    }
-  };
-  const result = await allProductCollection.updateOne(filter, update, options);
-  res.send(result);
+    };
 
-}
-catch(error){
-  console.error("Error Adding Upvote:", error);
-  res.status(500).send("Server Error");
-}
+    const result = await allProductCollection.updateOne(filter, update);
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ message: 'Product category updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Product not found or category unchanged' });
+    }
+  } catch (error) {
+    console.error('Error updating product category:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
 });
+
+// Other necessary configurations and app setup...
+
+// Start the server
+
+
+
+
+
+
+
+//  app.post('/techProduct/:id/addReview', async (req,res) => {
+//   const { id } = req.params;
+//   const { username, comment, rating, photoURL } = req.body;
+//   const timestamp = new Date();
+  
+//   console.log(req.body);
+//   console.log(id);
+
+// try {
+//   const filter = {_id: new ObjectId(id)}
+//   const options = { upsert: true};
+//   const update = {
+//     $push: {
+//       reviews: {
+//         name: username,
+//         comment: comment,
+//         rating: rating,
+//         photoURL: photoURL,
+//         timestamp: timestamp
+//       }
+//     }
+//   };
+//   const result = await allProductCollection.updateOne(filter, update, options);
+//   res.send(result);
+
+// }
+// catch(error){
+//   console.error("Error Adding Upvote:", error);
+//   res.status(500).send("Server Error");
+// }
+// });
 
 app.get('/productsCount', async(req, res) => {
   const count = await allProductCollection.estimatedDocumentCount();
@@ -159,12 +194,44 @@ app.put('/techProduct/:id', async(req, res) => {
         productDetails: updatedProduct.productDetails, 
         OwnerEmail: updatedProduct.OwnerEmail,
         productOwner: updatedProduct.productOwner,
-        image: updatedProduct.image
+        image: updatedProduct.image,
+        timestamp: updatedProduct.timestamp,
+        
+
       }
   }
     const result = await allProductCollection.updateOne(filter, product, options)
     res.send(result);
 })
+
+// test update product
+// app.post('/techProduct/:id/addCategory', async (req, res) => {
+//   const { id } = req.params;
+//   const category = req.body;
+//   const timestamp = new Date();
+
+//   console.log(req.body);
+//   console.log(id);
+
+//   try {
+//     const filter = { _id: new ObjectId(id) }
+//     const options = { upsert: true };
+//     const update = {
+//       $push: {
+//         category: category,
+//         timestamp: timestamp
+//       }
+//     };
+//     const result = await allProductCollection.updateOne(filter, update, options);
+//     res.json(result); // Return result as JSON
+//   } catch (error) {
+//     console.error("Error Adding Category:", error);
+//     res.status(500).json({ error: "Internal Server Error" }); // Return error as JSON
+//   }
+// });
+
+
+
 
 //  add user to server
 // ==========================
